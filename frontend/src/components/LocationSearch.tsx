@@ -1,41 +1,46 @@
 import React, { useState } from "react";
-import  Input from "@material-ui/core/Input";
-import  Button from "@material-ui/core/Button";
-
+import { Input, Button } from "@material-ui/core";
 import { locationState } from "../atoms";
+
 import {
     RecoilRoot,
     atom,
     selector,
     useRecoilState,
-    useSetRecoilState,
+    useRecoilValue,
+    useSetRecoilState
 } from "recoil";
 
 const LocationSearch = () => {
     const [inputValue, setInputValue] = useState('');
-    const setLocationState = useSetRecoilState(locationState);
-    const [location, setLocation] = useRecoilState(locationState);
+    const [location, setLocationState] = useRecoilState(locationState);
+
+    const onClick = () => {
+        setLocationState((state)=>inputValue);
+    };
 
     const onChange = (event: any) => {
         setInputValue(event.target.value);
     };
 
-    const onClick = () => {
-        setLocationState((location) => inputValue); 
-        setInputValue('');
-    }
-
     return (
         <div>
-            {location == '' && (
-                <div className="LocationSearch">
-                    <h1>BASiL</h1>
-                    <Input onChange={onChange} value={inputValue} />
-                    <Button onClick={onClick} variant="contained" color="primary"/>
+        {location =='' && (
+            <div className="LocationSearch" id="LocationSearch">
+                <h1>BASiL</h1>
+                <div className="LocationSearch-input">
+                    <Input value={inputValue} onChange={onChange} />
+                    <Button variant="contained" color="primary">
+                        Search
+                    </Button>
                 </div>
-            )}
+            </div>
+            
+    )}
         </div>
-    );
+    )
+
 };
 
-export { LocationSearch };
+export {LocationSearch};
+

@@ -30,10 +30,11 @@ const postgraphileOptions = {
 app.use(
     postgraphile(
         process.env.DATABASE_URL ||
-            "postgresql://db_owner:pwd@127.0.0.1:5432/foodapp",
+            "postgresql://anthony:brownie1!@127.0.0.1:5432/foodapp",
         "savonfood_public",
         postgraphileOptions
     )
-);
-
+)
 app.listen(process.env.PORT || 3000);
+
+console.log("running on localhost:3000");

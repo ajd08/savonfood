@@ -1,17 +1,22 @@
-import React from 'react';
-import './App.css';
+import "./App.css";
+import React from "react";
+import { LocationSearch } from "./components/LocationSearch";
+import {
+    RecoilRoot,
+    atom,
+    selector,
+    useRecoilState,
+    useRecoilValue,
+} from "recoil";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-      <div>
-          <h1>Hello World</h1>
-      </div>
-
-      </header>
-    </div>
-  );
+    return (
+        <RecoilRoot>
+            <div className="App">
+                <LocationSearch/>
+            </div>
+        </RecoilRoot>
+    );
 }
 
 export default App;

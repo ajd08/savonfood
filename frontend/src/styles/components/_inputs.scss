@@ -1,0 +1,18 @@
+.MuiInputBase-root {
+    margin: 1rem;
+}
+
+input.MuiInputBase-input.MuiInput-input {
+    text-align: center;
+    font-family: $secondary-font-family !important;
+
+}
+
+div.MuiInputBase-root.MuiInput-root.MuiInput-underline::after {
+    border-bottom: 2px solid $primary-color1;
+}
+
+div.MuiInputBase-root.MuiInput-root.MuiInput-underline::before {
+    border-bottom: 1px solid $primary-color1;
+}
+

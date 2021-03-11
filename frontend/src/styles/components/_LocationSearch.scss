@@ -1,6 +1,6 @@
 .LocationSearch-container {
-    grid-row: 2/4;
-    grid-column: 3/6;
+    grid-row: 3/5;
+    grid-column: 2/7;
 
     #LocationSearch {
         display: flex;
@@ -10,6 +10,10 @@
         max-height: 100%;
 
         div.LocationSearch-searchInput {
+            display:flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: start;
             button {
                 background-color: #secondary-col;
             }

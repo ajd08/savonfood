@@ -35,7 +35,7 @@ const LocationSearch = () => {
                     <Fade
                         in={check}
                         timeout={3000}
-                        style={{ transitionDelay: check ? "3000ms" : "0ms" }}
+                        style={{ transitionDelay: check ? "2000ms" : "0ms" }}
                     >
                         <div className="LocationSearch-searchInput">
                             <Input

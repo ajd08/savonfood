@@ -5,9 +5,19 @@ import { logger } from "../logger/config";
 const axios = require("axios");
 
 const api_key: string = "766e0045c601414e9ec04bd9fa363a9f";
-let product_url: string =
+const product_url: string =
     "https://api.spoonacular.com/food/products/classify?apiKey=766e0045c601414e9ec04bd9fa363a9f";
 
+ /**
+   * Return all data about a grocery item
+   *
+   * @remarks
+   * This is our spoontacular utilities lib for shared projects.
+   *
+   * @param item_title - the title of the grocery item
+   * 
+   * @returns data based on 'item_title'
+   */
 const getProductInfo = async (item_title: string) => {
 
     const options = {
@@ -25,7 +35,7 @@ const getProductInfo = async (item_title: string) => {
     };
     try {
         const response = await axios(options);
-        const data = response.data.category;
+        const data = response.data;
         return data;
     } catch (e) {
         return e;
@@ -33,11 +43,23 @@ const getProductInfo = async (item_title: string) => {
     }
 };
 
-const getRecipes = async (numRecipes: number) => {
-    let ingredients = await getIngredientsByStoreId(438);
-    let num: string = numRecipes.toString();
 
-    let url: string =
+ /**
+   * Return all possible recipes from grocery items from a store
+   * based on store id.
+   *
+   * @remarks
+   * This is our spoontacular utilities lib for shared projects.
+   *
+   * @param numRecipes - the number of recipes to return
+   * @param ingredients - list of all possible ingredients
+   * 
+   * @returns list of recipes
+   */
+const getRecipes = async (numRecipes: number, ingredients: string[]) => {
+    const num: string = numRecipes.toString();
+
+    const url: string =
         "https://api.spoonacular.com/recipes/complexSearch?apiKey=" +
         api_key +
         "&ingredients=";
@@ -72,9 +94,19 @@ const getRecipes = async (numRecipes: number) => {
     }
 };
 
-const getRecipe = async () => {
-    let url: string =
-        "https://api.spoonacular.com/recipes/1426909/information?apiKey=" +
+ /**
+   * Returns data on a recipe based on the recipe ID. 
+   *
+   * @remarks
+   * This is our spoontacular utilities lib for shared projects.
+   *
+   * @param recipeID - the id of the recipe that needs data
+   * 
+   * @returns data on specified recipe
+   */
+const getRecipe = async (recipeID: string) => {
+    const url: string =
+        "https://api.spoonacular.com/recipes/" +recipeID+ "/information?apiKey=" +
         api_key;
     try {
         const response = await axios.get(url);
@@ -84,7 +116,7 @@ const getRecipe = async () => {
     } catch (e) {
         return e;
     } finally {
-        logger.log("info", "getProductInfo: DONE!");
+        logger.log("info", "getRecipe: DONE!");
     }
 };
 

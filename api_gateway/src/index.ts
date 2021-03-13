@@ -1,6 +1,5 @@
 import express from "express";
 import winston from "winston";
-import routes from './routes';
 
 const app = express();
 const port = 8080; // default port to listen
@@ -9,8 +8,6 @@ const port = 8080; // default port to listen
 app.get( "/", ( req, res ) => {
     res.send( "Hello world!" );
 } );
-
-app.use('/recipes', routes.recipes);
 
 // start the Express server
 app.listen( port, () => {

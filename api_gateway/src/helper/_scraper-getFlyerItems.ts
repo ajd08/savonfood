@@ -1,5 +1,6 @@
 import { parse } from "recipe-ingredient-parser-v2";
 import { getProductInfo } from "./_spoonacularApi";
+import {logger} from "../logger/config";
 
 const puppeteer = require("puppeteer");
 
@@ -44,7 +45,7 @@ const metro = {
         "#other_flyer_runs > div > div > div > div.other_flyer_runs_wrapper > table > tbody > :first-child > td.info > a",
 };
 
-var food_basics = {
+const food_basics = {
     LOCATION_INPUT_SELECTOR:
         "#get_location > div > div.enter_postal_code > form > div:nth-child(3) > div > div.postal_code > div > input",
     LOCATION_INPUT_ENTER_SELECTOR:
@@ -64,8 +65,6 @@ const flyer_scraper = async (
 ) => {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-
-    console.log("Opening a new page!");
 
     try {
         await page.goto(flyerUrl, { waitUntil: "networkidle0" });
@@ -92,12 +91,12 @@ const flyer_scraper = async (
         return element ? element?.childElementCount : null;
     }, LIST_ITEM_SELECTOR);
 
-    console.log(numItems);
+    logger.info("SCRAPER: Total items in flyer: " + numItems);
 
-    let groceryItems : GroceryItem[] = [];
+    const groceryItems : GroceryItem[] = [];
 
     for (let i = 1; i < numItems; i++) {
-        let listItemButtonSelector = iframe_selectors.LIST_ITEM_BUTTON_SELECTOR.replace(
+        const listItemButtonSelector = iframe_selectors.LIST_ITEM_BUTTON_SELECTOR.replace(
             "INDEX",
             i.toString()
         );
@@ -109,9 +108,9 @@ const flyer_scraper = async (
             element?.click();
         }, listItemButtonSelector);
 
-        await page.waitForTimeout(waitTimeClickSameUrl);
+        await page.waitForSelector(iframe_selectors.ITEM_TITLE_SELECTOR);
 
-        let item_title = await page.evaluate((sel: string) => {
+        const item_title = await page.evaluate((sel: string) => {
             const element = document.querySelector(sel);
             return element ? element?.textContent : null;
         }, iframe_selectors.ITEM_TITLE_SELECTOR);
@@ -120,7 +119,7 @@ const flyer_scraper = async (
             continue;
         }
 
-        let item_price: string = await page.evaluate(
+        const item_price: string = await page.evaluate(
             (sel: string) => {
                 const element_prePrice = document.querySelector(sel[0]);
                 const element_Price = document.querySelector(sel[1]);
@@ -136,7 +135,7 @@ const flyer_scraper = async (
                     ? element_postPrice.textContent?.trim()!
                     : "";
 
-                let price: string =
+                const price: string =
                     prePriceText + " " + priceText + " " + postPriceText;
                 return price;
             },
@@ -147,41 +146,41 @@ const flyer_scraper = async (
             ]
         );
 
-        let dates: string[] = await page.evaluate((sel: string) => {
+        const dates: string[] = await page.evaluate((sel: string) => {
             const element = document.querySelector(sel);
             return element
                 ? element.textContent?.trim()?.substring(6)?.split(" - ")
                 : ["", ""];
         }, iframe_selectors.ITEM_DATE_SELECTOR);
 
-        let start_date = dates[0];
-        let end_date = dates[1];
+        const start_date = dates[0];
+        const end_date = dates[1];
 
-        let same_price_items: string[] = item_title.split("or");
+        const same_price_items: string[] = item_title.split("or");
 
         for (let j = 0; j < same_price_items.length; j++) {
-            let item = same_price_items[j]?.trim();
+            const item = same_price_items[j]?.trim();
 
-            //let productInfo: any = await getProductInfo(item);
-            //let item_category = "";
+            // let productInfo: any = await getProductInfo(item);
+            // let item_category = "";
 
-            //if (productInfo != null) {
+            // if (productInfo != null) {
             //    item_category = productInfo.category;
-            //}
+            // }
 
-            //if (item_category == "" || item_category == "non food item") {
+            // if (item_category == "" || item_category == "non food item") {
             //    continue;
-            //}
+            // }
 
             groceryItems.push({
                 title:  item,
                 price: item_price,
-                start_date: start_date,
-                end_date: end_date,
+                start_date,
+                end_date,
             });
 
             console.log("item_title: " + item);
-            //console.log("item_category: " + item_category);
+            // console.log("item_category: " + item_category);
             console.log("item_price: " + item_price);
             console.log("start_date: " + start_date);
             console.log("end_date: " + end_date);
@@ -207,19 +206,19 @@ const nofrills_flyer_crawler = async (postal_code: string) => {
     await page.click(FLYER_BUTTON_SELECTOR, { waitUntil: "load" });
 
     await page.waitForTimeout(waitTime);
-    console.log("Loading Iframe link");
-    const flyer_link = await page.evaluate(() => {
-        const FLYER_IFRAME_SELECTOR = "iframe#flipp-iframe";
+
+    const FLYER_IFRAME_SELECTOR = "iframe#flipp-iframe";
+
+    await page.waitForSelector(FLYER_IFRAME_SELECTOR);
+
+    logger.info("CRAWLER: Opening flyer");
+    const flyer_link = await page.evaluate((sel:string) => {
         return document
-            .querySelector(FLYER_IFRAME_SELECTOR)
+            .querySelector(sel)
             ?.getAttribute("src")
             ?.toString();
-    });
-    console.log("Iframe link received!");
-    console.log(flyer_link);
-
-    await page.goto(flyer_link, { waitUntil: "networkidle0" });
-    await page.waitForTimeout(waitTime);
+    },FLYER_IFRAME_SELECTOR);
+    logger.info("CRAWLER: FLYER OPENED at " + flyer_link);
 
     await browser.close();
 
@@ -308,7 +307,3 @@ const food_basics_crawler = async (postal_code: string) => {
 };
 
 export {nofrills_flyer_crawler};
-
-//****************FOR TESTING PURPOSES ONLY
-//metro_flyer_crawler();
-//food_basics_crawler();

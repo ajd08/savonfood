@@ -10,7 +10,6 @@ const apiKeys: string[] = [
     "2f690765657c46a985f0cd65028fc4fa",
     "482150f6d831442382adfaf9a8e2085c",
 ];
-const api_key: string = "766e0045c601414e9ec04bd9fa363a9f";
 /**
  * Returns a usable api key
  *
@@ -33,7 +32,7 @@ const getApiKey = async () => {
             logger.info("("+ (i+1).toString() + "/" + apiKeys.length.toString() + ") api keys used!") ;
             return api_key;
         } catch (e) {
-            logger.error("API Key out of juice: " + api_key);
+            //logger.error("API Key out of juice: " + api_key);
         }
     }
     throw new Error("All keys ran out of juice!");
@@ -92,6 +91,7 @@ const getProductInfo = async (item_title: string) => {
  */
 const getRecipes = async (numRecipes: number, ingredients: string[]) => {
     const num: string = numRecipes.toString();
+    let api_key: string = await getApiKey();
 
     const url: string =
         "https://api.spoonacular.com/recipes/complexSearch?apiKey=" +
@@ -139,6 +139,7 @@ const getRecipes = async (numRecipes: number, ingredients: string[]) => {
  * @returns data on specified recipe
  */
 const getRecipe = async (recipeID: number) => {
+    let api_key: string = getApiKey();
     const url: string =
         "https://api.spoonacular.com/recipes/" +
         recipeID.toString() +

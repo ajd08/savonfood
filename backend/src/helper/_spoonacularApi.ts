@@ -2,6 +2,7 @@ import { parse } from "recipe-ingredient-parser-v2";
 import { getIngredientsByStoreId } from '../helper/_postgraphile';
 
 const axios = require("axios");
+const winston= require("winston");
 
 const api_key: string = "766e0045c601414e9ec04bd9fa363a9f";
 let product_url: string =
@@ -25,9 +26,9 @@ export const getProductInfo = async (item_title: string) => {
         .then(function (response) {
             return response.data;
         })
-        .catch(function (error) {
-            console.log(error);
-            return null;
+        .catch((e) => {
+            winston.log("error", "cant get product info from db");
+            return e;
         });
     return product_info;
 };
@@ -83,6 +84,6 @@ export const getRecipe = async () => {
         });
     return recipe;
 };
-getRecipes(9);
+//getRecipes(9);
 //getRecipe();
 

@@ -1,7 +1,9 @@
 import { parse } from "recipe-ingredient-parser-v2";
-import { getProductInfo } from "../test/_spoonacularApi";
-import { createItem } from "../helper/_apollo";
+import { getProductInfo } from "./_spoonacularApi";
+import { createItem } from "./_postgraphile";
+import { getStoreID } from "./_postgraphile";
 
+const winston = require('winston');
 const puppeteer = require("puppeteer");
 
 const waitTime = 2000;
@@ -50,9 +52,9 @@ var food_basics = {
 
 const flyer_scraper = async (
     store: {
-        LOCATION_INPUT_SELECTOR: string;
-        LOCATION_INPUT_ENTER_SELECTOR: string;
-        FLYER_LOCALE_SELECTOR: string;
+        LOCATION_INPUT_SELECTOR?: string;
+        LOCATION_INPUT_ENTER_SELECTOR?: string;
+        FLYER_LOCALE_SELECTOR?: string;
     },
     flyerUrl: string
 ) => {
@@ -168,15 +170,6 @@ const flyer_scraper = async (
             if (item_category == "" || item_category == "non food item") {
                 continue;
             }
-
-            createItem(
-                item,
-                item_category,
-                item_price,
-                nearest_store_id,
-                start_date,
-                end_date
-            );
 
             console.log("item_title: " + item);
             console.log("item_category: " + item_category);
@@ -303,6 +296,7 @@ const food_basics_crawler = async () => {
     flyer_scraper(food_basics, flyer_link);
 };
 
+//****************FOR TESTING PURPOSES ONLY
 //metro_flyer_crawler();
 nofrills_flyer_crawler();
 //food_basics_crawler();

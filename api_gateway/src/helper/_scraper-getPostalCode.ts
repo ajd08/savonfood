@@ -8,10 +8,9 @@ import { logger } from "../logger/config";
  * @returns postal code of nearest nofrills store
  *
  */
-
 const getNoFrillsLocation = async (postal_code: string) => {
     try {
-        const browser = await puppeteer.launch({ headless: false });
+        const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
         const url: string = "https://www.nofrills.ca/store-locator?type=store";
         await page.goto(url);
@@ -24,10 +23,10 @@ const getNoFrillsLocation = async (postal_code: string) => {
             "#store-locator > div > div.store-locator__content > div > div.store-locator-content__list > ul > li:nth-child(1) > div > div.location-list-item__info > div.location-list-item__info__details > div > div.location-list-item-details__address > address > div.location-address__line.location-address__line--region";
         await page.waitForSelector(LOCATION_SELECTOR);
 
-        let element = await page.$(LOCATION_SELECTOR);
-        let value = await page.evaluate((el) => el.textContent, element);
+        const element = await page.$(LOCATION_SELECTOR);
+        const value = await page.evaluate((el) => el.textContent, element);
 
-        let location: string = value
+        const location: string = value
             .substr(value.length - 7)
             .replace(/\s+/g, "")
             .toLowerCase();

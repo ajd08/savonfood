@@ -9,13 +9,17 @@ const postgraphileOptions = {
     dynamicJson: true,
     setofFunctionsContainNulls: false,
     ignoreRBAC: false,
-    ignoreIndexes: false,
+    //ignoreIndexes: false,
     showErrorStack: "json",
     extendedErrors: ["hint", "detail", "errcode"],
-    appendPlugins: [require("@graphile-contrib/pg-simplify-inflector")],
+    exportGqlSchemaPath: "schema.graphql",
+    appendPlugins: [
+        require("@graphile-contrib/pg-simplify-inflector"),
+        require("postgraphile-plugin-connection-filter"),
+    ],
     graphiql: true,
     enhanceGraphiql: true,
-    ownerConnectionString: "postgresql://postgres:postgres@127.0.0.1/foodapp", 
+    ownerConnectionString: "postgresql://postgres:postgres@127.0.0.1/foodapp",
     allowExplain(req) {
         // TODO: customise condition!
         return true;
@@ -30,11 +34,11 @@ const postgraphileOptions = {
 app.use(
     postgraphile(
         process.env.DATABASE_URL ||
-            "postgresql://anthony:brownie1!@127.0.0.1:5432/foodapp",
+            "postgres://anthony:brownie1!@127.0.0.1:5432/foodapp",
         "savonfood_public",
         postgraphileOptions
     )
-)
+);
 app.listen(process.env.PORT || 3000);
 
 console.log("running on localhost:3000");

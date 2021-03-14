@@ -161,17 +161,6 @@ const flyer_scraper = async (
         for (let j = 0; j < same_price_items.length; j++) {
             const item = same_price_items[j]?.trim();
 
-            // let productInfo: any = await getProductInfo(item);
-            // let item_category = "";
-
-            // if (productInfo != null) {
-            //    item_category = productInfo.category;
-            // }
-
-            // if (item_category == "" || item_category == "non food item") {
-            //    continue;
-            // }
-
             groceryItems.push({
                 title:  item,
                 price: item_price,
@@ -204,8 +193,6 @@ const nofrills_flyer_crawler = async (postal_code: string) => {
         "#site-content > div > div > div > div > div.flyers-location-search-content > div.flyers-location-search-content__items > div:nth-child(1) > div > div.flyers-location-search-item__main__content > button";
 
     await page.click(FLYER_BUTTON_SELECTOR, { waitUntil: "load" });
-
-    await page.waitForTimeout(waitTime);
 
     const FLYER_IFRAME_SELECTOR = "iframe#flipp-iframe";
 

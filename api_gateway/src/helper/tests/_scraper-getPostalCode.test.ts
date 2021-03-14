@@ -1,5 +1,5 @@
-import {getNoFrillsLocation} from "./_scraper-getPostalCode";
-import {logger} from "../logger/config";
+import {getNoFrillsLocation} from "../_scraper-getPostalCode";
+import {logger} from "../../logger/config";
 
 test("Get nearest no frills location", async () => {
     jest.setTimeout(30000);

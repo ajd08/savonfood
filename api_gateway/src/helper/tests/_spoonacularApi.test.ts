@@ -1,5 +1,5 @@
-import { axiosRequest, getProductInfo, getRecipes, getRecipe } from "../helper/_spoonacularApi";
-import { apiKeys } from "../helper/_spoonacularApi";
+import { axiosRequest, getProductInfo, getRecipes, getRecipe } from "../../helper/_spoonacularApi";
+import { apiKeys } from "../../helper/_spoonacularApi";
 
 test("No API keys to use", async () => {
     const product_url: string =

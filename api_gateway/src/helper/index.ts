@@ -1,5 +1,5 @@
 import { nofrills_flyer_crawler } from "./_scraper-getFlyerItems";
-import { getStoreID } from "./_postgraphile";
+import { getStoreIDByPostalCodeAndCompanyName } from "./_postgraphile";
 import { getNoFrillsLocation } from "../helper/_scraper-getPostalCode";
 import { logger } from "../logger/config";
 import {getProductInfo} from "../helper/_spoonacularApi";
@@ -22,10 +22,14 @@ interface Item {
     store_id: number;
 }
 const createGroceryItemsNoFrills = async (postal_code: string) => {
+    logger.info("Starting Item No Frills collection");
     let items_preStoreid = await nofrills_flyer_crawler(postal_code);
+
     let postal_code_store: string = await getNoFrillsLocation(postal_code);
-    let storeID: number = await getStoreID(postal_code_store);
-    logger.log("info", "this is the store id : " + storeID);
+    logger.info("No Frills postal code: " + postal_code_store);
+
+    let storeID: number = await getStoreIDByPostalCodeAndCompanyName(postal_code_store,"nofrills");
+    logger.log("info", "No Frills Store ID : " + storeID);
 
     //assigns store id to grocery items
     let items_preCategory = await items_preStoreid.map((item) => {
@@ -33,16 +37,16 @@ const createGroceryItemsNoFrills = async (postal_code: string) => {
     });
 
     let items = await Promise.all(items_preCategory.map(async(item) => {
-        let category_info = await getProductInfo(item.title);
-        return {...item, category: category_info};
+        let item_data = await getProductInfo(item.title);
+        let category = item_data.category;
+        return {...item, category: category};
     }));
 
+    logger.info("No Frills Items" + JSON.stringify(items));
     
     await Promise.all(items.map(async(item)=> {
         await createItem(item);
     }))
-    logger.log("info","Done creating grocery items from nofrills!");
+    logger.info("DONE creating no frills items");
 
 };
-createGroceryItemsNoFrills("m1w2y5");
-

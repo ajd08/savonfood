@@ -10,34 +10,34 @@ const apiKeys: string[] = [
     "2f690765657c46a985f0cd65028fc4fa",
     "482150f6d831442382adfaf9a8e2085c",
 ];
-/**
- * Returns a usable api key
- *
- * @remarks
- * This is our spoontacular utilities lib for shared projects.
- *
- * @returns a usable api key
- */
-const getApiKey = async () => {
-    for (let i = 0; i < apiKeys.length; i++) {
-        let api_key = apiKeys[i];
 
-        let test_url: string =
-            "https://api.spoonacular.com/recipes/convert?apiKey=" +
-            api_key +
-            "&ingredientName=flour&sourceAmount=2.5&sourceUnit=cups&targetUnit=grams";
+interface Options {
+    method: string;
+    url: string;
+    data: any;
+}
+const axiosRequest = async (options: Options, apiKeys: string[]) => {
+    for (let i = 0; i < apiKeys.length; i++) {
+        let api_key: string = apiKeys[i];
+        options.url = options.url.replace("$APIKEY", api_key);
+
         try {
-            const response = await axios.get(test_url);
-            const data = JSON.stringify(response.data, null, 2);
-            logger.info("("+ (i+1).toString() + "/" + apiKeys.length.toString() + ") api keys used!") ;
-            return api_key;
+            const response = await axios(options);
+            const data = response.data;
+            logger.info(
+                "(" +
+                    (i + 1).toString() +
+                    "/" +
+                    apiKeys.length.toString() +
+                    ") api keys used!"
+            );
+            return data;
         } catch (e) {
-            //logger.error("API Key out of juice: " + api_key);
+            logger.error("API Key out of juice: " + api_key, e);
         }
     }
-    throw new Error("All keys ran out of juice!");
+    throw new Error("All API keys used");
 };
-
 /**
  * Return all data about a grocery item
  *
@@ -50,15 +50,11 @@ const getApiKey = async () => {
  */
 const getProductInfo = async (item_title: string) => {
     const product_url: string =
-        "https://api.spoonacular.com/food/products/classify?apiKey=766e0045c601414e9ec04bd9fa363a9f";
+        "https://api.spoonacular.com/food/products/classify?apiKey=$APIKEY";
 
     const options = {
         url: product_url,
         method: "POST",
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=UTF-8",
-        },
         data: {
             title: item_title,
             upc: "",
@@ -66,14 +62,12 @@ const getProductInfo = async (item_title: string) => {
         },
     };
     try {
-        const response = await axios(options);
-        const data = JSON.stringify(response.data, null, 2);
-        logger.info(data);
+        const data = await axiosRequest(options, apiKeys);
+        logger.info(JSON.stringify(data));
         return data;
     } catch (e) {
         logger.error("getProductInfo not working", e);
         return e;
-    } finally {
     }
 };
 
@@ -91,37 +85,34 @@ const getProductInfo = async (item_title: string) => {
  */
 const getRecipes = async (numRecipes: number, ingredients: string[]) => {
     const num: string = numRecipes.toString();
-    let api_key: string = await getApiKey();
 
-    const url: string =
-        "https://api.spoonacular.com/recipes/complexSearch?apiKey=" +
-        api_key +
-        "&ingredients=";
-
-    let url2: string =
-        "https://api.spoonacular.com/recipes/findByIngredients?apiKey=" +
-        api_key +
-        "&ingredients=";
+    let url: string =
+        "https://api.spoonacular.com/recipes/findByIngredients?apiKey=$APIKEY&ingredients=";
 
     if (ingredients.length > 0) {
         for (let i = 0; i < ingredients.length; i++) {
             if (i == 0) {
-                url2 += ingredients[i].replace(" ", "%20");
+                url += ingredients[i].replace(" ", "%20");
             } else {
-                url2 += ",+" + ingredients[i].replace(" ", "%20");
+                url += ",+" + ingredients[i].replace(" ", "%20");
             }
         }
 
-        url2 += "&number=" + num + "&type=soup";
+        url += "&number=" + num + "&type=soup";
     }
-    console.log(url2);
+
+    const options: Options = {
+        method: "get",
+        url: url,
+        data: {},
+    };
 
     try {
-        const response = await axios.get(url2);
-        const recipes = JSON.stringify(response.data, null, 2);
-        logger.log("info", recipes);
-        return recipes;
+        const data = await axiosRequest(options, apiKeys);
+        logger.info(JSON.stringify(data));
+        return data;
     } catch (e) {
+        logger.error("error for getRecipes", e)
         return e;
     } finally {
         logger.log("info", "getProductInfo: DONE!");
@@ -139,16 +130,21 @@ const getRecipes = async (numRecipes: number, ingredients: string[]) => {
  * @returns data on specified recipe
  */
 const getRecipe = async (recipeID: number) => {
-    let api_key: string = getApiKey();
     const url: string =
         "https://api.spoonacular.com/recipes/" +
         recipeID.toString() +
-        "/information?apiKey=" +
-        api_key;
+        "/information?apiKey=$APIKEY";
+
+    const options : Options = {
+        method: "get",
+        url: url,
+        data: {},
+    };
+
     try {
-        const response = await axios.get(url);
-        const recipe = response.data;
-        return recipe;
+        const data = await axiosRequest(options,apiKeys);
+        logger.info(JSON.stringify(data,null,2));
+        return data;
     } catch (e) {
         return e;
     } finally {
@@ -156,4 +152,4 @@ const getRecipe = async (recipeID: number) => {
     }
 };
 
-export { getRecipes, getRecipe, getProductInfo, getApiKey };
+export { getRecipes, getRecipe, getProductInfo, axiosRequest, apiKeys};

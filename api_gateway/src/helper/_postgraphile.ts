@@ -215,22 +215,24 @@ const getStoreIDByPostalCodeAndCompanyName = async (postal_code: string, company
         },
     };
 
-    const store_id = "";
+    let store_id: number = null;
 
     try {
         const response = await axios(options);
         await logger.log("info", JSON.stringify(response.data));
-        const store_id: number = await response.data.data.stores.edges[0].node
-            .id;
+        try {
+            store_id = await response.data.data.stores.edges[0].node.id;
+        }
+        catch(e) {
+            throw new Error("store id not found in database: " + e);
+
+        }
         await logger.log("info", store_id);
         return store_id;
-    } catch (err) {
-        logger.log("error", "unable to get storeid", err);
-        return err;
-    } finally {
-        logger.log("info", "getStoreID: all done!");
-    }
-    return store_id;
+    } catch (e) {
+        logger.log("error", "Cannot get store Id: ", e);
+        throw new Error ("Cannot get store ID " + e);
+    }  
 };
 
 export { createItem, createStore, getIngredientsByStoreId, getStoreIDByPostalCodeAndCompanyName };

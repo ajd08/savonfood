@@ -17,10 +17,11 @@ interface Options {
     data: any;
 }
 const axiosRequest = async (options: Options, apiKeys: string[]) => {
+    const url_SELECTOR = options.url;
     for (let i = 0; i < apiKeys.length; i++) {
         let api_key: string = apiKeys[i];
-        options.url = options.url.replace("$APIKEY", api_key);
-
+        let url = url_SELECTOR.replace("$APIKEY", api_key);
+        options.url=url;
         try {
             const response = await axios(options);
             const data = response.data;
@@ -33,7 +34,7 @@ const axiosRequest = async (options: Options, apiKeys: string[]) => {
             );
             return data;
         } catch (e) {
-            logger.error("API Key out of juice: " + api_key, e);
+            //logger.error("API Key out of juice: " + api_key, e);
         }
     }
     throw new Error("All API keys used");
@@ -152,4 +153,4 @@ const getRecipe = async (recipeID: number) => {
     }
 };
 
-export { getRecipes, getRecipe, getProductInfo, axiosRequest, apiKeys};
+export { getRecipes, getRecipe, getProductInfo, apiKeys};

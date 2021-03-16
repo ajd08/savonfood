@@ -11,12 +11,22 @@ import {
     getProductInfo,
 } from "./helper/_spoonacularApi";
 
+var cors = require('cors');
+
 const app = express();
 const port = 8080; // default port to listen
+
+app.use(cors());
 
 // define a route handler for the default home page
 app.get("/", async (req, res, next) => {
     const postalCode = req.query.postalcode.toString();
+
+    if(postalCode=="") {
+        res.send([]);
+        return;
+
+    }
 
     //list of all the stores
     let stores_id: number[] = [];
@@ -34,7 +44,7 @@ app.get("/", async (req, res, next) => {
         ingredients_list = ingredients_list.concat(ingredients_list_nofrills);
         logger.info(ingredients_list);
 
-        let recipes = await getRecipes(10, ingredients_list);
+        let recipes = await getRecipes(5, ingredients_list);
 
         recipes = await Promise.all(
             recipes.map(async (recipe: any) => {
@@ -55,10 +65,6 @@ app.get("/", async (req, res, next) => {
     } catch (e) {
         next(e);
     }
-});
-
-app.get("/", async (req, res) => {
-    res.send("error");
 });
 
 app.get("/test", (req, res) => {

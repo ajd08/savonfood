@@ -22,6 +22,7 @@
     "homepage": "https://github.com/ajd08/savonfood#readme",
     "dependencies": {
         "axios": "^0.21.1",
+        "cors": "^2.8.5",
         "express": "^4.17.1",
         "puppeteer": "^8.0.0",
         "recipe-ingredient-parser-v2": "^1.1.1",

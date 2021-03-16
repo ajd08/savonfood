@@ -48,5 +48,4 @@ export {
     locationState,
     locationSearchState,
     currentRecipesQuery,
-    counterState,
 };

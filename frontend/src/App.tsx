@@ -1,6 +1,7 @@
 import "./App.css";
 import React from "react";
-import { LocationSearch } from "./components/LocationSearch";
+import { LocationSearch } from "./pages/LocationSearch";
+import { Home } from "./pages/Home";
 import {
     RecoilRoot,
     atom,
@@ -9,12 +10,24 @@ import {
     useRecoilValue,
 } from "recoil";
 
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+
 function App() {
     return (
         <RecoilRoot>
-            <div className="App">
-                <LocationSearch/>
-            </div>
+            <Router>
+                <div className="App">
+                    <Switch>
+                        <Route exact path="/">
+                            <LocationSearch />
+                        </Route>
+                        <Route path="/home">
+                            <Home />
+                        </Route>
+                        <Route path="/dashboard"></Route>
+                    </Switch>
+                </div>
+            </Router>
         </RecoilRoot>
     );
 }

@@ -4,7 +4,6 @@ import {
     locationState,
     locationSearchState,
     currentRecipesQuery,
-    counterState,
 } from "../atoms";
 
 import {

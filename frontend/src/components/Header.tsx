@@ -9,10 +9,10 @@ const Header = () => {
                     <h2>BASiL</h2>
                 </header>
                 <div className="header-navigation">
-                    <a href="/home">APPETIZERS</a>
-                    <a href="/home">ENTREES</a>
-                    <a href="/home">DESSERTS</a>
-                    <a href="/home">COCKTAILS</a>
+                    <Link className="link-appetizers" to="/home">APPETIZERS</Link>
+                    <Link className="link-entrees" to="/home">ENTRÉES</Link>
+                    <Link className="link-desserts" to="/home">DESSERTS</Link>
+                    <Link className="link-cocktails" to="/home">COCKTAILS</Link>
                 </div>
             </div>
         </Router>

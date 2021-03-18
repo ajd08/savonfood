@@ -13,7 +13,7 @@ body {
 
 h1 {
     font-family: $primary-font-family;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.10em;
     font-weight: $normal;
     font-size: 96px;
     margin: auto;
@@ -21,7 +21,7 @@ h1 {
 
 h2 {
     font-family: $primary-font-family;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.10em;
     font-weight: $semi-bold;
     font-size: 60px;
     margin: auto;
@@ -29,8 +29,24 @@ h2 {
 
 h3 {
     font-family: $primary-font-family;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.10em;
     font-weight: $semi-bold;
     font-size: 48px;
+    margin: auto;
+}
+
+h4 {
+    font-family: $primary-font-family;
+    letter-spacing: 0.10em;
+    font-weight: $semi-bold;
+    font-size: 34px;
+    margin: auto;
+}
+
+h5 {
+    font-family: $primary-font-family;
+    letter-spacing: 0.10em;
+    font-weight: $semi-bold;
+    font-size: 24px;
     margin: auto;
 }

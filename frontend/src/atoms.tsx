@@ -7,17 +7,15 @@ import {
     useRecoilValue,
 } from "recoil";
 import { useHistory } from "react-router-dom";
+import { recoilPersist } from "recoil-persist";
 
 const axios = require("axios");
+const  { persistAtom } = recoilPersist();
 
 const locationState = atom({
     key: "locationState",
     default: "",
-});
-
-const counterState = atom({
-    key: "counterState",
-    default: 0,
+    effects_UNSTABLE: [persistAtom],
 });
 
 const locationSearchState = selector({
@@ -26,7 +24,7 @@ const locationSearchState = selector({
     get: async ({ get }) => {
         const location = get(locationState);
         const recipes = get(currentRecipesQuery);
-        if(location!="" && recipes!=[]) {
+        if (location != "" && recipes != []) {
             return false;
         }
     },
@@ -44,8 +42,27 @@ const currentRecipesQuery = selector({
     },
 });
 
+const selectedRecipePositionState = atom({
+    key: "recipePositionState",
+    default: 0,
+});
+
+const selectedRecipeState = selector({
+    key: "selectedRecipeState",
+    get: async ({ get }) => {
+        const allRecipes = get(currentRecipesQuery);
+        const recipePos = get(selectedRecipePositionState);
+        if (allRecipes != []) {
+            return allRecipes[recipePos];
+        }
+        return null;
+    },
+});
+
 export {
     locationState,
     locationSearchState,
     currentRecipesQuery,
+    selectedRecipeState,
+    selectedRecipePositionState
 };

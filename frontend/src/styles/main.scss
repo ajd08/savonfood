@@ -1,8 +1,10 @@
 @import "abstracts/_variables";
 @import "base/_typography";
 @import "base/_reset";
-@import "layout/_app";
-@import "components/_LocationSearch"; 
+@import "pages/_LocationSearch";
+@import "pages/_Home";
+@import "components/_Header";
+@import "components/_RecipeHeader";
 @import "components/_buttons";
 @import "components/_inputs";
 @import "components/_circularProgress.scss";

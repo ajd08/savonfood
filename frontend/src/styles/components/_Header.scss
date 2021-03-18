@@ -24,8 +24,28 @@
             letter-spacing: 0.15em;
 
             display: inline-block;
-            padding: 15px 20px;
+            padding-top: 20px;
+            padding-bottom: 20px;
             position: relative;
+
+            &.link-entrees {
+                font-weight: $semi-bold;
+
+                &:after {
+                    background: none repeat scroll 0 0 transparent;
+                    bottom: 6;
+                    content: "";
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    height: 2px;
+                    left: 0%;
+                    position: absolute;
+                    background: $primary-color1;
+                    transition: width 0.3s ease 0s, left 0.3s ease 0s;
+                    width: 100%;
+                }
+            }
 
             &:hover {
                 font-weight: $semi-bold;
@@ -41,7 +61,7 @@
                 height: 2px;
                 left: 50%;
                 position: absolute;
-                background: $primary-color1;
+                background: $primary-color3;
                 transition: width 0.3s ease 0s, left 0.3s ease 0s;
                 width: 0;
             }

@@ -2,6 +2,7 @@ import "./App.css";
 import React from "react";
 import { LocationSearch } from "./pages/LocationSearch";
 import { Home } from "./pages/Home";
+import { RecipePage } from "./pages/RecipeContent";
 import {
     RecoilRoot,
     atom,
@@ -21,10 +22,12 @@ function App() {
                         <Route exact path="/">
                             <LocationSearch />
                         </Route>
+                        <Route path="/home/recipe">
+                            <RecipePage />
+                        </Route>
                         <Route path="/home">
                             <Home />
                         </Route>
-                        <Route path="/dashboard"></Route>
                     </Switch>
                 </div>
             </Router>

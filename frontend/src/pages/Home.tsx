@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Input, Button, Zoom, Fade } from "@material-ui/core";
-import { locationState } from "../atoms";
+import { locationState, currentRecipesQuery } from "../atoms";
 import { Header } from "../components/Header";
-
+import { HomePageContent } from "../components/HomePageContent";
 
 import {
     RecoilRoot,
@@ -15,7 +15,12 @@ import {
 
 const Home = () => {
     return (
-        <Header/>
+        <Fade in={true} timeout={500}>
+            <div id="HomePage-container">
+                <Header />
+                <HomePageContent />
+            </div>
+        </Fade>
     );
 };
 

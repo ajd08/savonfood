@@ -4,6 +4,7 @@ import { getNoFrillsLocation } from "../helper/_scraper-getPostalCode";
 import { logger } from "../logger/config";
 import {getProductInfo} from "../helper/_spoonacularApi";
 import { createItem } from "../helper/_postgraphile";
+import {checkRecipeStopWords} from "../helper/checkRecipeStopWords"
 
 /**
  * Creates grocery items in db based on a flyer

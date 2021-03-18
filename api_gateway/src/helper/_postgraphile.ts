@@ -2,16 +2,16 @@ import { logger } from "../logger/config";
 const axios = require("axios");
 const host_url: string = "http://localhost:3000/graphql";
 
- /**
-   * Creates a stores in postgraphile db
-   *
-   * @remarks
-   * This is our postgraphile utilities lib for shared projects.
-   *
-   * @param store - object of type Store
-   * 
-   * stores a Store objects in psql db
-   */
+/**
+ * Creates a stores in postgraphile db
+ *
+ * @remarks
+ * This is our postgraphile utilities lib for shared projects.
+ *
+ * @param store - object of type Store
+ *
+ * stores a Store objects in psql db
+ */
 
 interface Store {
     companyName: string;
@@ -21,9 +21,7 @@ interface Store {
     province: string;
     postalCode: string;
 }
-const createStore = async (
-    store:Store
-) => {
+const createStore = async (store: Store) => {
     const options = {
         url: host_url,
         method: "POST",
@@ -67,15 +65,15 @@ interface Item {
 }
 
 /**
-* Creates a item in postgraphile db
-*
-* @remarks
-* This is our postgraphile utilities lib for shared projects.
-*
-* @param store - object of type Item
-* 
-* stores a Item object in psql db
-*/
+ * Creates a item in postgraphile db
+ *
+ * @remarks
+ * This is our postgraphile utilities lib for shared projects.
+ *
+ * @param store - object of type Item
+ *
+ * stores a Item object in psql db
+ */
 const createItem = async (item: Item) => {
     const options = {
         url: host_url,
@@ -108,24 +106,23 @@ const createItem = async (item: Item) => {
 
     try {
         const response = await axios(options);
-        logger.log("info", "ITEM CREATED: "+ item.title);
+        logger.log("info", "ITEM CREATED: " + item.title);
     } catch (e) {
-        logger.error("unable to create item",e);
+        logger.error("unable to create item", e);
         return e;
     }
 };
 
-
 /**
-* Returns all ingredients in a store by store ID
-*
-* @remarks
-* This is our postgraphile utilities lib for shared projects.
-*
-* @param store_id - id of a store
-* 
-* returns a list of all ingredients from a store
-*/
+ * Returns all ingredients in a store by store ID
+ *
+ * @remarks
+ * This is our postgraphile utilities lib for shared projects.
+ *
+ * @param store_id - id of a store
+ *
+ * returns a list of all ingredients from a store
+ */
 const getIngredientsByStoreId = async (store_id: number) => {
     const options = {
         url: host_url,
@@ -165,7 +162,7 @@ const getIngredientsByStoreId = async (store_id: number) => {
         );
 
         ingredients_list = ingredients_list.filter(
-            (item, index) => item != "non food item" 
+            (item, index) => item != "non food item"
         );
     } catch (err) {
         logger.log("error", "cant connect to database ganglands");
@@ -175,19 +172,21 @@ const getIngredientsByStoreId = async (store_id: number) => {
     return ingredients_list;
 };
 
-
 /**
-* Returns the id of a store based on postal code and company name
-*
-* @remarks
-* This is our postgraphile utilities lib for shared projects.
-*
-* @param postal_code: postal code of the store
-* @param companyName: company that the store belongs to
-* 
-* returns the id of the store
-*/
-const getStoreIDByPostalCodeAndCompanyName = async (postal_code: string, companyName: string) => {
+ * Returns the id of a store based on postal code and company name
+ *
+ * @remarks
+ * This is our postgraphile utilities lib for shared projects.
+ *
+ * @param postal_code: postal code of the store
+ * @param companyName: company that the store belongs to
+ *
+ * returns the id of the store
+ */
+const getStoreIDByPostalCodeAndCompanyName = async (
+    postal_code: string,
+    companyName: string
+) => {
     const options = {
         url: host_url,
         method: "POST",
@@ -222,17 +221,118 @@ const getStoreIDByPostalCodeAndCompanyName = async (postal_code: string, company
         await logger.log("info", JSON.stringify(response.data));
         try {
             store_id = await response.data.data.stores.edges[0].node.id;
-        }
-        catch(e) {
+        } catch (e) {
             throw new Error("store id not found in database: " + e);
-
         }
         await logger.log("info", store_id);
         return store_id;
     } catch (e) {
         logger.log("error", "Cannot get store Id: ", e);
-        throw new Error ("Cannot get store ID " + e);
-    }  
+        throw new Error("Cannot get store ID " + e);
+    }
 };
 
-export { createItem, createStore, getIngredientsByStoreId, getStoreIDByPostalCodeAndCompanyName };
+/**
+ * Creates a group of recipes from ingredrients on sale within vicinity
+ *
+ * @remarks
+ * This is our postgraphile utilities lib for shared projects.
+ *
+ * @param postal_code: the postal code that the user submitted
+ * @param recipes: the array of recipes
+ *
+ * 
+ */
+const createRecipes = async (postal_code:string, recipe:any) => {
+    const options = {
+        url: host_url,
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        data: {
+            query: `
+                mutation createRecipe($postal_code: String!, $info:JSON!) {
+                  createRecipe(
+                    input: {recipe: {postalCode: $postal_code, info: $info}}
+                  ) {
+                    clientMutationId
+                  }
+                }
+            `,
+
+            variables: {
+                postal_code: postal_code,
+                info: recipe,
+            },
+        },
+    };
+    try{
+        const response = await axios(options);
+        const data = JSON.stringify(response.data, null, 2);
+        logger.info("RECIPE CREATED IN DB")
+
+    } catch(e) {
+        throw new Error("createRecipes not working -> " + e);
+    }
+};
+
+//createRecipes("m1w2y5",[{title:"chickens", id: 1980283}]);
+/**
+ * Creates a group of recipes from ingredrients on sale within vicinity
+ *
+ * @remarks
+ * This is our postgraphile utilities lib for shared projects.
+ *
+ * @param postal_code: the postal code that the user submitted
+ * @param recipes: the array of recipes
+ *
+ * 
+ */
+const queryRecipesByPostalCode = async (postal_code:string) => {
+    const options = {
+        url: host_url,
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        data: {
+            query: `
+                query getRecipes($postal_code: String!) {
+                  recipes(filter: {postalCode: {equalTo: $postal_code}}) {
+                    edges {
+                      node {
+                        date
+                        id
+                        info
+                        nodeId
+                        postalCode
+                      }
+                    }
+                  }
+                }
+          `,
+
+            variables: {
+                postal_code: postal_code,
+            },
+        },
+    };
+    const response = await axios(options);
+    //logger.info(JSON.stringify(response.data, null, 2));
+    logger.info("POTENTIAL RECIPES DETECTED SUCCESSFULLY!")
+    logger.info(JSON.stringify(response.data));
+    return response.data;
+};
+
+
+export {
+    createItem,
+    createStore,
+    getIngredientsByStoreId,
+    getStoreIDByPostalCodeAndCompanyName,
+    createRecipes,
+    queryRecipesByPostalCode
+};

@@ -4,12 +4,18 @@ import { getNoFrillsLocation } from "./helper/_scraper-getPostalCode";
 import {
     getStoreIDByPostalCodeAndCompanyName,
     getIngredientsByStoreId,
+    queryRecipesByPostalCode,
+    createRecipes,
+
 } from "./helper/_postgraphile";
 import {
     getRecipes,
     getRecipe,
     getProductInfo,
 } from "./helper/_spoonacularApi";
+import {checkRecipeStopWords} from "./helper/checkRecipeStopWords";
+import {getImageURL} from "./helper/_scraper-getRecipeImg";
+import {getRecipeMetaData} from "./helper/_misc";
 
 var cors = require('cors');
 
@@ -20,17 +26,31 @@ app.use(cors());
 
 // define a route handler for the default home page
 app.get("/", async (req, res, next) => {
-    const postalCode = req.query.postalcode.toString();
+    const postalCode:string = req.query.postalcode.toString();
 
+    //if the submitted an empty string
     if(postalCode=="") {
         res.send([]);
         return;
+    }
 
+    //check if there are already recipes in the database for postalcode specified
+    const queryRecipe_response = await queryRecipesByPostalCode(postalCode);
+
+    //recipes exist for the postal code
+    let recipe_data = queryRecipe_response.data.recipes.edges;
+    logger.info("this is the recipe_data: " + JSON.stringify(recipe_data));
+    if(recipe_data!="") {
+        let recipes = recipe_data.map((recipe:any)=>recipe.node.info);
+        res.send(recipes);
+        return;
     }
 
     //list of all the stores
     let stores_id: number[] = [];
 
+
+    //CASE: Recipes for this postal code have not been entered into the db yet
     try {
         let nofrills_postalCode: string = await getNoFrillsLocation(postalCode);
         let nofrills_storeID: number = await getStoreIDByPostalCodeAndCompanyName(
@@ -44,22 +64,50 @@ app.get("/", async (req, res, next) => {
         ingredients_list = ingredients_list.concat(ingredients_list_nofrills);
         logger.info(ingredients_list);
 
-        let recipes = await getRecipes(5, ingredients_list);
+        let recipes = await getRecipes(10, ingredients_list);
+
+        recipes = recipes.filter((recipe: any) => checkRecipeStopWords(recipe.title));
 
         recipes = await Promise.all(
             recipes.map(async (recipe: any) => {
                 let id: number = recipe.id;
                 let recipe_fullDetails = await getRecipe(id);
+                let summary: string = recipe_fullDetails.summary;
+                let sourceUrl = recipe_fullDetails.sourceUrl;
+                let img: string = await getImageURL(recipe.title, sourceUrl);
+                let recipeMetaData = getRecipeMetaData(summary);
+
+                if(img!="") {
+                    recipe.image = img;
+                }
+                else {
+                    recipe.image = recipe_fullDetails.image;
+                }
                 return {
                     ...recipe,
                     readyInMinutes: recipe_fullDetails.readyInMinutes,
                     servings: recipe_fullDetails.servings,
-                    sourceUrl: recipe_fullDetails.sourceUrl,
-                    summary: recipe_fullDetails.summary,
+                    sourceUrl: sourceUrl,
+                    summary: summary,
+                    image: recipe.image,
                     instructions: recipe_fullDetails.analyzedInstructions,
+                    protein: recipeMetaData.protein,
+                    calories: recipeMetaData.calories,
+                    servings_nutrition: recipeMetaData.serving,
+                    fat: recipeMetaData.fat,
                 };
             })
         );
+        recipes = recipes.slice(0,6);
+
+        for(let i=0;i<recipes.length;i++) {
+            logger.info(JSON.stringify(recipes[i]));
+            await createRecipes(postalCode,recipes[i]);
+        }
+
+        const queryRecipe_response = await queryRecipesByPostalCode(postalCode);
+        let recipe_data = queryRecipe_response.data.recipes.edges;
+        recipes = recipe_data.map((recipe:any)=>recipe.node.info);
 
         res.send(recipes);
     } catch (e) {

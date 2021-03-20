@@ -10,12 +10,12 @@ import { useHistory } from "react-router-dom";
 import { recoilPersist } from "recoil-persist";
 
 const axios = require("axios");
-const  { persistAtom } = recoilPersist();
+//const  { persistAtom } = recoilPersist();
 
 const locationState = atom({
     key: "locationState",
     default: "",
-    effects_UNSTABLE: [persistAtom],
+    //effects_UNSTABLE: [persistAtom],
 });
 
 const locationSearchState = selector({
@@ -59,10 +59,31 @@ const selectedRecipeState = selector({
     },
 });
 
+
+const stepState = atom({
+    key: "stepState",
+    default: 1,
+});
+
+const currentStepTextState = selector({
+    key: "currentStepTextState",
+    get: async ({ get }) => {
+        const step_index = get(stepState);
+        const recipeState = get(selectedRecipeState);
+        if (recipeState.instructions[0].steps[step_index]) {
+            return recipeState.instructions[0].steps[step_index];
+        }
+        return null
+    },
+});
+
+
 export {
     locationState,
     locationSearchState,
     currentRecipesQuery,
     selectedRecipeState,
-    selectedRecipePositionState
+    selectedRecipePositionState,
+    stepState,
+    currentStepTextState
 };

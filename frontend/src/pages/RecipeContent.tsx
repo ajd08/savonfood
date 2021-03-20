@@ -12,12 +12,17 @@ import {
     CircularProgress,
     Divider,
 } from "@material-ui/core";
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import { selectedRecipeState } from "../atoms";
 import { Header } from "../components/Header";
 import { HomePageContent } from "../components/HomePageContent";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 
+import { capitalizeFirstLetter, addZeroes } from "../helper/misc";
+
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { VerticalTabs } from "../components/Directions";
+import { useHistory } from "react-router-dom";
 
 import {
     RecoilRoot,
@@ -65,92 +70,140 @@ const handleChange = () => {
     console.log("Something is changing!");
 };
 
-//const useStyles = makeStyles((theme: Theme) => ({
-//    root: {
-//        flexGrow: 1,
-//        backgroundColor: theme.palette.background.paper,
-//    },
-//}));
-
 function SimpleTabs() {
-    //const classes = useStyles();
+    const history = useHistory();
     const [value, setValue] = React.useState(0);
     const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setValue(newValue);
     };
     const recipeLoadable = useRecoilValueLoadable(selectedRecipeState);
 
+    const onClickHeader = () => {
+        history.push("/home");
+    };
+
     switch (recipeLoadable.state) {
         case "hasValue":
-            const regex = /Chicken/i;
             let summary = recipeLoadable.contents.summary;
             let servings = recipeLoadable.contents.servings;
             let calories = recipeLoadable.contents.calories;
             let protein = recipeLoadable.contents.protein;
             let fat = recipeLoadable.contents.fat;
+            let usedIngredients = recipeLoadable.contents.usedIngredients;
+            let missedIngredients = recipeLoadable.contents.missedIngredients;
 
             return (
-                <div id="Recipe-container">
-                    <div className="header-container">
-                        <Link to="/home">
-                            <h4> BASiL </h4>
-                        </Link>
-                        <AppBar position="static">
-                            <Tabs
-                                value={value}
-                                onChange={handleChange}
-                                aria-label="simple tabs example"
-                            >
-                                <Tab label="Ingredients" {...a11yProps(0)} />
-                                <Tab label="Direction" {...a11yProps(1)} />
-                            </Tabs>
-                        </AppBar>
-                    </div>
-                    <div className="recipe-content">
-                        <div className="recipe-content-title">
-                            <div className="photo">
-                                <img
-                                    src={recipeLoadable.contents.image}
-                                    alt={recipeLoadable.contents.title}
-                                />
+                <Router>
+                    <div id="Recipe-container">
+                        <div className="header-container">
+                            <div className="header-logo">
+                                <Link to="/home" onClick={onClickHeader}>
+                                    <h4> THYME </h4>
+                                </Link>
                             </div>
-                            <div className="recipe-text">
-                                <h4> {recipeLoadable.contents.title} </h4>
+                            <AppBar position="static">
+                                <Tabs
+                                    value={value}
+                                    onChange={handleChange}
+                                    aria-label="simple tabs example"
+                                >
+                                    <Tab
+                                        label="Ingredients"
+                                        {...a11yProps(0)}
+                                    />
+                                    <Tab label="Direction" {...a11yProps(1)} />
+                                </Tabs>
+                            </AppBar>
+                        </div>
+                        <div className="recipe-content">
+                            <div className="recipe-content-title">
+                                <div className="photo">
+                                    <img
+                                        src={recipeLoadable.contents.image}
+                                        alt={recipeLoadable.contents.title}
+                                    />
+                                </div>
+                                <div className="recipe-text">
+                                    <h4> {recipeLoadable.contents.title} </h4>
 
-                                <Divider />
-                                <div className="recipe-text-summary">
-                                    <div className="text-summary-meta">
-                                        <p className="title"> Servings </p>
-                                        <p> {servings} </p>
-                                    </div>
-                                    <div className="vertical-line"></div>
-                                    <div className="text-summary-meta">
-                                        <p className="title"> Calories </p>
-                                        <p> {calories} </p>
-                                    </div>
-                                    <div className="vertical-line"></div>
-                                    <div className="text-summary-meta">
-                                        <p className="title"> Protein </p>
-                                        <p> {protein} </p>
-                                    </div>
-                                    <div className="vertical-line"></div>
-                                    <div className="text-summary-meta">
-                                        <p className="title"> Fat </p>
-                                        <p> {fat} </p>
+                                    <Divider />
+                                    <div className="recipe-text-summary">
+                                        <div className="text-summary-meta">
+                                            <p className="title"> Servings </p>
+                                            <p> {servings} </p>
+                                        </div>
+                                        <div className="vertical-line"></div>
+                                        <div className="text-summary-meta">
+                                            <p className="title"> Calories </p>
+                                            <p> {calories} </p>
+                                        </div>
+                                        <div className="vertical-line"></div>
+                                        <div className="text-summary-meta">
+                                            <p className="title"> Protein </p>
+                                            <p> {protein} </p>
+                                        </div>
+                                        <div className="vertical-line"></div>
+                                        <div className="text-summary-meta">
+                                            <p className="title"> Fat </p>
+                                            <p> {fat} </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="recipe-content-info">
-                            <TabPanel value={value} index={0}>
-                                Ingredients
-                            </TabPanel>
-                            <TabPanel value={value} index={1}>
-                                Direction
-                            </TabPanel>
+                            <div className="recipe-content-info">
+                                <TabPanel value={value} index={0}>
+                                    {usedIngredients.map(
+                                        (ingredient: any, index: number) => (
+                                            <div className="ingredient-line">
+                                                <AddCircleOutlineIcon />
+                                                <p className="ingredient-text">
+                                                    {" "}
+                                                    {capitalizeFirstLetter(
+                                                        ingredient.name
+                                                    )}{" "}
+                                                </p>
+                                                <div className="elipsis-filler">
+                                                    ........................................................................................................................................................................................................................................................................................................................................................................................................................................................
+                                                </div>
+                                                <p className="ingredient-unit">
+                                                    {addZeroes(
+                                                        ingredient.amount
+                                                    )}{" "}
+                                                    cup
+                                                </p>
+                                            </div>
+                                        )
+                                    )}
+                                    {missedIngredients.map(
+                                        (ingredient: any, index: number) => (
+                                            <div className="ingredient-line">
+                                                <AddCircleOutlineIcon />
+                                                <p className="ingredient-text">
+                                                    {" "}
+                                                    {capitalizeFirstLetter(
+                                                        ingredient.name
+                                                    )}{" "}
+                                                </p>
+                                                <div className="elipsis-filler">
+                                                    ........................................................................................................................................................................................................................................................................................................................................................................................................................................................
+                                                </div>
+                                                <p className="ingredient-unit">
+                                                    {addZeroes(
+                                                        ingredient.amount
+                                                    )}{" "}
+                                                    cup
+                                                </p>
+                                            </div>
+                                        )
+                                    )}
+                                </TabPanel>
+                                <TabPanel value={value} index={1}>
+                                    <VerticalTabs />
+                                </TabPanel>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </Router>
             );
         case "loading":
             return <CircularProgress />;
@@ -162,11 +215,9 @@ function SimpleTabs() {
 const RecipePage = () => {
     const [value, setValue] = React.useState(0);
     return (
-        <Router>
-            <Fade in={true} timeout={1000}>
-                <SimpleTabs />
-            </Fade>
-        </Router>
+        <Fade in={true} timeout={1000}>
+            <SimpleTabs />
+        </Fade>
     );
 };
 //                        <AppBar position="static" color="default">

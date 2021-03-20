@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input, Button, Zoom, Fade, CircularProgress } from "@material-ui/core";
 import {
     locationState,
@@ -18,7 +18,7 @@ import {
     useRecoilValueLoadable,
 } from "recoil";
 
-import {selectedRecipePositionState} from "../atoms";
+import {selectedRecipePositionState, stepState} from "../atoms";
 
 import { useHistory } from "react-router-dom";
 
@@ -27,6 +27,7 @@ const HomePageContent = () => {
     const recipesLoadable = useRecoilValueLoadable(currentRecipesQuery);
     const location = useRecoilValue(locationState);
     const recipeLoadable = useRecoilValueLoadable(selectedRecipeState);
+    const [step, setStepState] = useRecoilState(stepState);
 
     const [recipePosition, setRecipePosition] = useRecoilState(selectedRecipePositionState);
     if (location == "") {
@@ -36,6 +37,11 @@ const HomePageContent = () => {
     const onClick = (index: number) => (event:any) => {
         setRecipePosition(index);
     }
+
+    useEffect(()=> {
+        setStepState(1);
+
+    })
 
 
 

@@ -21,7 +21,7 @@ const LocationSearch = () => {
         <div className="LocationSearch-container">
             <div className="LocationSearch" id="LocationSearch">
                 <Fade in={true} timeout={2000}>
-                    <h1>BASiL</h1>
+                    <h1>THYME</h1>
                 </Fade>
 
                 <Fade

@@ -18,8 +18,8 @@ import {
     useRecoilValueLoadable,
 } from "recoil";
 
-import {selectedRecipePositionState, stepState} from "../atoms";
-
+import { selectedRecipePositionState, stepState } from "../atoms";
+import { Parallax, Background } from "react-parallax";
 import { useHistory } from "react-router-dom";
 
 const HomePageContent = () => {
@@ -29,21 +29,20 @@ const HomePageContent = () => {
     const recipeLoadable = useRecoilValueLoadable(selectedRecipeState);
     const [step, setStepState] = useRecoilState(stepState);
 
-    const [recipePosition, setRecipePosition] = useRecoilState(selectedRecipePositionState);
+    const [recipePosition, setRecipePosition] = useRecoilState(
+        selectedRecipePositionState
+    );
     if (location == "") {
         history.push("/");
     }
 
-    const onClick = (index: number) => (event:any) => {
+    const onClick = (index: number) => (event: any) => {
         setRecipePosition(index);
-    }
+    };
 
-    useEffect(()=> {
+    useEffect(() => {
         setStepState(1);
-
-    })
-
-
+    });
 
     switch (recipesLoadable.state) {
         case "hasValue":
@@ -59,15 +58,22 @@ const HomePageContent = () => {
                     <div className="HomePage-content-container">
                         {recipes.map((recipe: any, index: number) => (
                             <div className="recipe-container">
-                                <Link to="/home/recipe" onClick={onClick(index)}>
+                                <Link
+                                    to="/home/recipe"
+                                    onClick={onClick(index)}
+                                >
                                     <div className="photo">
-                                        <img
-                                            src={recipe.image.replace(
-                                                "312x231",
-                                                "636x393"
-                                            )}
-                                            alt={recipe.title}
-                                        ></img>
+                                        <Parallax strength={300}>
+                                            <Background className="custom-bg">
+                                                <img
+                                                    src={recipe.image.replace(
+                                                        "312x231",
+                                                        "636x393"
+                                                    )}
+                                                    alt={recipe.title}
+                                                ></img>
+                                            </Background>
+                                        </Parallax>
                                     </div>
                                     <div className="photo-caption">
                                         <figcaption>{recipe.title}</figcaption>

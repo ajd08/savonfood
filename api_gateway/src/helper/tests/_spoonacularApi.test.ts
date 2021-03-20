@@ -1,26 +1,26 @@
-import { axiosRequest, getProductInfo, getRecipes, getRecipe } from "../../helper/_spoonacularApi";
+import { getProductInfo, getRecipes, getRecipe } from "../../helper/_spoonacularApi";
 import { apiKeys } from "../../helper/_spoonacularApi";
 
-test("No API keys to use", async () => {
-    const product_url: string =
-        "https://api.spoonacular.com/food/products/classify?apiKey=$APIKEY";
-
-    const apiKeys: string[] = [];
-
-    const options = {
-        url: product_url,
-        method: "POST",
-        data: {
-            title: "SUPER HALAL WINGS",
-            upc: "",
-            plu_code: "",
-        },
-    };
-    await expect(axiosRequest(options, apiKeys)).rejects.toThrow(
-        "All API keys used"
-    );
-});
-
+//test("No API keys to use", async () => {
+//    const product_url: string =
+//        "https://api.spoonacular.com/food/products/classify?apiKey=$APIKEY";
+//
+//    const apiKeys: string[] = [];
+//
+//    const options = {
+//        url: product_url,
+//        method: "POST",
+//        data: {
+//            title: "SUPER HALAL WINGS",
+//            upc: "",
+//            plu_code: "",
+//        },
+//    };
+//    await expect(axiosRequest(options, apiKeys)).rejects.toThrow(
+//        "All API keys used"
+//    );
+//});
+//
 test("Returns wings product info", async () => {
     const data = await getProductInfo("SUPER HALAL WINGS");
 

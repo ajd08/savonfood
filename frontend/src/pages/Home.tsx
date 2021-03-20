@@ -15,12 +15,10 @@ import {
 
 const Home = () => {
     return (
-        <Fade in={true} timeout={500}>
-            <div id="HomePage-container">
-                <Header />
-                <HomePageContent />
-            </div>
-        </Fade>
+        <div id="HomePage-container">
+            <Header />
+            <HomePageContent />
+        </div>
     );
 };
 

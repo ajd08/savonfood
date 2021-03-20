@@ -54,48 +54,43 @@ const HomePageContent = () => {
             console.log(recipeLoadable.contents);
 
             return (
-                <Fade in={true} timeout={500}>
-                    <div className="HomePage-content-container">
-                        {recipes.map((recipe: any, index: number) => (
-                            <div className="recipe-container">
-                                <Link
-                                    to="/home/recipe"
-                                    onClick={onClick(index)}
-                                >
-                                    <div className="photo">
-                                        <Parallax strength={300}>
-                                            <Background className="custom-bg">
-                                                <img
-                                                    src={recipe.image.replace(
-                                                        "312x231",
-                                                        "636x393"
-                                                    )}
-                                                    alt={recipe.title}
-                                                ></img>
-                                            </Background>
-                                        </Parallax>
-                                    </div>
-                                    <div className="photo-caption">
-                                        <figcaption>{recipe.title}</figcaption>
-                                    </div>
-                                </Link>
-                            </div>
-                        ))}
-                        <div className="text-container">
-                            <p>
-                                Hearty, organic entrees made just a little
-                                better than homemade.
-                            </p>
+                <div className="HomePage-content-container">
+                    {recipes.map((recipe: any, index: number) => (
+                        <div className="recipe-container">
+                            <Link to="/home/recipe" onClick={onClick(index)}>
+                                <div className="photo">
+                                    <Parallax strength={300}>
+                                        <Background className="custom-bg">
+                                            <img
+                                                src={recipe.image.replace(
+                                                    "312x231",
+                                                    "636x393"
+                                                )}
+                                                alt={recipe.title}
+                                            ></img>
+                                        </Background>
+                                    </Parallax>
+                                </div>
+                                <div className="photo-caption">
+                                    <figcaption>{recipe.title}</figcaption>
+                                </div>
+                            </Link>
                         </div>
-
-                        <div className="text-container">
-                            <p>
-                                Customized to sale items from your local grocery
-                                store.
-                            </p>
-                        </div>
+                    ))}
+                    <div className="text-container">
+                        <p>
+                            Hearty, organic entrees made just a little better
+                            than homemade.
+                        </p>
                     </div>
-                </Fade>
+
+                    <div className="text-container">
+                        <p>
+                            Customized to sale items from your local grocery
+                            store.
+                        </p>
+                    </div>
+                </div>
             );
 
         case "loading":

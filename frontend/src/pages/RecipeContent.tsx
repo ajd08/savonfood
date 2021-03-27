@@ -84,6 +84,10 @@ function SimpleTabs() {
 
     switch (recipeLoadable.state) {
         case "hasValue":
+            if (recipeLoadable === undefined) {
+                history.push("/");
+            }
+
             let summary = recipeLoadable.contents.summary;
             let servings = recipeLoadable.contents.servings;
             let calories = recipeLoadable.contents.calories;
@@ -155,7 +159,7 @@ function SimpleTabs() {
                                     {usedIngredients.map(
                                         (ingredient: any, index: number) => (
                                             <div className="ingredient-line">
-                                                <AddCircleOutlineIcon />
+                                                <p className="ingredient-text"> {index+1}.  </p>
                                                 <p className="ingredient-text">
                                                     {" "}
                                                     {capitalizeFirstLetter(
@@ -169,7 +173,7 @@ function SimpleTabs() {
                                                     {addZeroes(
                                                         ingredient.amount
                                                     )}{" "}
-                                                    cup
+                                                    {ingredient.unitShort}
                                                 </p>
                                             </div>
                                         )
@@ -177,7 +181,7 @@ function SimpleTabs() {
                                     {missedIngredients.map(
                                         (ingredient: any, index: number) => (
                                             <div className="ingredient-line">
-                                                <AddCircleOutlineIcon />
+                                                <p className="ingredient-text"> {index+1}.  </p>
                                                 <p className="ingredient-text">
                                                     {" "}
                                                     {capitalizeFirstLetter(
@@ -191,7 +195,7 @@ function SimpleTabs() {
                                                     {addZeroes(
                                                         ingredient.amount
                                                     )}{" "}
-                                                    cup
+                                                    {ingredient.unitShort}
                                                 </p>
                                             </div>
                                         )
@@ -220,18 +224,5 @@ const RecipePage = () => {
         </Fade>
     );
 };
-//                        <AppBar position="static" color="default">
-//                            <Tabs
-//                                value={1}
-//                                onChange={handleChange}
-//                                indicatorColor="primary"
-//                                textColor="primary"
-//                                variant="fullWidth"
-//                                aria-label="full width tabs example"
-//                            >
-//                                <Tab label="INGREDIENTS" />
-//                                <Tab label="DIRECTIONS" />
-//                            </Tabs>
-//                        </AppBar>
 
 export { RecipePage };

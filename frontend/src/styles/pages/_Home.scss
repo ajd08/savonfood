@@ -1,4 +1,12 @@
 $recipe-container-box-height: 290px;
+#HomePage-container > div.Header-container {
+    a {
+        text-decoration: none;
+        color: $primary-color1;
+
+    }
+
+};
 #HomePage-container > div.HomePage-content-container {
     display: grid;
     column-gap: 1em;

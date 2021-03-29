@@ -1,0 +1,59 @@
+#version: "3"
+#services:
+#  frontend:
+#    build: ./frontend/
+#    ports:
+#      - "5000:5000"
+#  backend:
+#    build: ./backend/
+#    ports:
+#      - "3000:3000"
+
+version: "3.3"
+services:
+    db:
+        container_name: thyme-db
+        restart: always
+        image: thyme-db
+        build:
+            context: ./db
+        volumes:
+            - db:/var/lib/postgresql/data
+        env_file:
+            - ./.env
+        networks:
+            - network
+        ports:
+            - 5432:5432
+
+    graphql:
+        container_name: thyme-graphql
+        restart: always
+        image: thyme-graphql
+        build:
+            context: ./backend
+        env_file:
+            - ./.env
+        depends_on:
+            - db
+        networks:
+            - network
+        ports:
+            - 5433:5433
+        command:
+            [
+                "--connection",
+                "${DATABASE_URL}",
+                "--port",
+                "5433",
+                "--schema",
+                "public",
+                "--append-plugins",
+                "postgraphile-plugin-connection-filter,@graphile-contrib/pg-simplify-inflector",
+            ]
+
+networks:
+    network:
+
+volumes:
+    db:

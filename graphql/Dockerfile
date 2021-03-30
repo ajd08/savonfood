@@ -28,7 +28,7 @@ LABEL description="Instant high-performance GraphQL API for your PostgreSQL data
 RUN npm install -g postgraphile
 RUN npm install -g postgraphile-plugin-connection-filter
 RUN npm install -g @graphile-contrib/pg-simplify-inflector
+RUN apk update && apk add bash
 
-EXPOSE 3000
 #ENTRYPOINT ["postgraphile", "-n", "0.0.0.0","--subscriptions","--watch","--dynamic-json",,"--show-error-stack","json", "--enhance-graphiql","--enable-query-batching","--legacy-functions-only"]
-ENTRYPOINT ["postgraphile", "-n", "0.0.0.0", "--enhance-graphiql","--subscriptions","--watch","--show-error-stack","json","--enable-query-batching","--legacy-functions-only","--dynamic-json"]
+#ENTRYPOINT ["postgraphile", "-n", "0.0.0.0", "--enhance-graphiql","--subscriptions","--watch","--show-error-stack","json","--enable-query-batching","--legacy-functions-only","--dynamic-json"]

@@ -16,6 +16,7 @@ import {
 import {checkRecipeStopWords} from "./helper/checkRecipeStopWords";
 import {getImageURL} from "./helper/_scraper-getRecipeImg";
 import {getRecipeMetaData} from "./helper/_misc";
+import {getTestStore} from "./helper/tests/_postgraphile.test";
 
 var cors = require('cors');
 
@@ -35,7 +36,12 @@ app.get("/", async (req, res, next) => {
     }
 
     //check if there are already recipes in the database for postalcode specified
+    //
+    console.log("BEFORE GETTING THE RECIPES...");
+
     const queryRecipe_response = await queryRecipesByPostalCode(postalCode);
+
+    console.log("GETTING THE RECIPES...");
 
     //recipes exist for the postal code
     let recipe_data = queryRecipe_response.data.recipes.edges;
@@ -52,6 +58,7 @@ app.get("/", async (req, res, next) => {
 
     //CASE: Recipes for this postal code have not been entered into the db yet
     try {
+        logger.info("GETTING THE NEAREST NO FRILLS POSTAL CODE");
         let nofrills_postalCode: string = await getNoFrillsLocation(postalCode);
         let nofrills_storeID: number = await getStoreIDByPostalCodeAndCompanyName(
             nofrills_postalCode,
@@ -65,6 +72,10 @@ app.get("/", async (req, res, next) => {
         logger.info(ingredients_list);
 
         let recipes = await getRecipes(10, ingredients_list);
+
+        logger.info("THIS IS THE RECIPES");
+        console.log(recipes);
+
 
         recipes = recipes.filter((recipe: any) => checkRecipeStopWords(recipe.title));
 
@@ -115,11 +126,14 @@ app.get("/", async (req, res, next) => {
     }
 });
 
-app.get("/test", (req, res) => {
-    throw new Error("BROKEN"); // Express will catch this on its own.
+app.get("/test", async(req, res) => {
+    const data = await getTestStore();
+    res.send(data);
+
+
 });
 
 // start the Express server
 app.listen(port, () => {
-    logger.info(`server started at http://localhost:${port}`);
+    logger.info(`server started at http://0.0.0.0:${port}`);
 });

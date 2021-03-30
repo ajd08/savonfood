@@ -1,6 +1,6 @@
 import { logger } from "../logger/config";
 const axios = require("axios");
-const host_url: string = "http://localhost:3000/graphql";
+const host_url: string = process.env["GRAPHQL_URL"]
 
 /**
  * Creates a stores in postgraphile db
@@ -328,11 +328,14 @@ const queryRecipesByPostalCode = async (postal_code:string) => {
 };
 
 
+
+
 export {
     createItem,
     createStore,
     getIngredientsByStoreId,
     getStoreIDByPostalCodeAndCompanyName,
     createRecipes,
-    queryRecipesByPostalCode
+    queryRecipesByPostalCode,
+    host_url
 };

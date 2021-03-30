@@ -16,7 +16,6 @@ import {
 import {checkRecipeStopWords} from "./helper/checkRecipeStopWords";
 import {getImageURL} from "./helper/_scraper-getRecipeImg";
 import {getRecipeMetaData} from "./helper/_misc";
-import {getTestStore} from "./helper/tests/_postgraphile.test";
 
 var cors = require('cors');
 
@@ -127,9 +126,7 @@ app.get("/", async (req, res, next) => {
 });
 
 app.get("/test", async(req, res) => {
-    const data = await getTestStore();
-    res.send(data);
-
+    throw new Error("BROKEN"); // Express will catch this on its own.
 
 });
 

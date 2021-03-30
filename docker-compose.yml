@@ -19,29 +19,43 @@ services:
             context: ./db
         volumes:
             - db:/var/lib/postgresql/data
-        env_file:
-            - ./.env
+            - ./db/scripts:/src/app
         networks:
-            - network
+            - local
         ports:
             - 5432:5432
+        env_file:
+            - ./.env
 
     graphql:
         container_name: thyme-graphql
         restart: always
         image: thyme-graphql
         build:
-            context: ./backend
-        env_file:
-            - ./.env
+            context: ./graphql
         depends_on:
             - db
         networks:
-            - network
+            - local
         ports:
             - 5433:5433
+
+        env_file:
+            - ./.env
+
         command:
             [
+                "postgraphile",
+                "-n",
+                "0.0.0.0",
+                "--enhance-graphiql",
+                "--subscriptions",
+                "--watch",
+                "--show-error-stack",
+                "json",
+                "--enable-query-batching",
+                "--legacy-functions-only",
+                "--dynamic-json",
                 "--connection",
                 "${DATABASE_URL}",
                 "--port",
@@ -52,8 +66,28 @@ services:
                 "postgraphile-plugin-connection-filter,@graphile-contrib/pg-simplify-inflector",
             ]
 
-networks:
-    network:
 
+    api-gateway:
+        container_name: thyme-api-gateway
+        restart: always
+        image: thyme-api-gateway
+        build:
+            context: ./api_gateway
+        volumes:
+            - ./api_gateway:/usr/src/app
+        depends_on:
+            - graphql
+        networks:
+            - local
+        ports:
+            - 8080:8080
+        env_file:
+            - ./.env
+        command:
+            ["npm", "start"]
+
+networks:
+    local:
+        driver: bridge
 volumes:
     db:

@@ -1,4 +1,3 @@
 #!/bin/bash
-docker-compose down 
-docker-compose build
-docker-compose up -d
+docker-compose down --volumes
+docker-compose up --build

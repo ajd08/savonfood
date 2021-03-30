@@ -4,7 +4,6 @@ CREATE SCHEMA private;
 CREATE SCHEMA peepee;
 
 ALTER SCHEMA private OWNER TO anthony;
-ALTER SCHEMA peepee OWNER TO anthony;
 
 CREATE TABLE public.items (
     id SERIAL PRIMARY KEY,

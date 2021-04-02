@@ -61,11 +61,10 @@ services:
                 "--port",
                 "5433",
                 "--schema",
-                "public",
+                "public,private",
                 "--append-plugins",
                 "postgraphile-plugin-connection-filter,@graphile-contrib/pg-simplify-inflector",
             ]
-
 
     api-gateway:
         container_name: thyme-api-gateway
@@ -85,6 +84,22 @@ services:
             - ./.env
         command:
             ["npm", "start"]
+
+    cron:
+        container_name: thyme-cron
+        restart: always
+        depends_on:
+            - graphql
+        build:
+            context: ./cron
+        networks: 
+            - local
+        volumes:
+            - ./cron:/src/app
+        ports:
+            - 5665:5665
+        env_file:
+            - ./.env
 
 networks:
     local:

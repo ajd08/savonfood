@@ -36,16 +36,13 @@ app.get("/", async (req, res, next) => {
 
     //check if there are already recipes in the database for postalcode specified
     //
-    console.log("BEFORE GETTING THE RECIPES...");
 
     const queryRecipe_response = await queryRecipesByPostalCode(postalCode);
-
-    console.log("GETTING THE RECIPES...");
 
     //recipes exist for the postal code
     let recipe_data = queryRecipe_response.data.recipes.edges;
     logger.info("this is the recipe_data: " + JSON.stringify(recipe_data));
-    if(recipe_data!="") {
+    if(recipe_data!=undefined || recipe_data.length!=0) {
         let recipes = recipe_data.map((recipe:any)=>recipe.node.info);
         res.send(recipes);
         return;

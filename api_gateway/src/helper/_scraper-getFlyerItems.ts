@@ -1,4 +1,3 @@
-import { parse } from "recipe-ingredient-parser-v2";
 import { getProductInfo } from "./_spoonacularApi";
 import {logger} from "../logger/config";
 

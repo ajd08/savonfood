@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+    cron:
+        container_name: thyme-cron
+        restart: always
+        build:
+            context: ./
+        networks: 
+            - local
+        ports:
+            - 5665:5665
+        volumes:
+            - ./:/src/app/
+
+
+networks:
+    local:
+        driver: bridge
+

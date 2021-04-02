@@ -1,51 +1,13 @@
 import { parse } from "recipe-ingredient-parser-v2";
-import { getIngredientsByStoreId } from "../helper/_postgraphile";
 import { logger } from "../logger/config";
-
-const axios = require("axios");
-
-const apiKeys: string[] = [
-    //"766e0045c601414e9ec04bd9fa363a9f",
-    //"b75d71f41f7e437fa334d2aff5b5c568",
-    //"2f690765657c46a985f0cd65028fc4fa",
-    //"482150f6d831442382adfaf9a8e2085c",
-    //"a0cba7000d3042c3bbc1a59ab7b28add",
-    "925e595bb1fe4c0faad62aa1b8dc6d4f",
-    "3967327a427648f6a41f8fd5c7583da7",
-    "12b44df98e774449b7e4075a7cbaf8c5"
-];
+import {axiosRequest} from "./axiosRequestHandler";
 
 interface Options {
     method: string;
     url: string;
     data: any;
 }
-const axiosRequest = async (options: Options) => {
-    const url_SELECTOR = options.url;
-    for (let i = 0; i < apiKeys.length; i++) {
-        let api_key: string = apiKeys[i];
-        let url = url_SELECTOR.replace("$APIKEY", api_key);
-        options.url = url;
-        try {
-            logger.log("info", "URL USED: " + options.url);
-            const response = await axios(options);
-            const data = response.data;
-            logger.info(
-                "(" +
-                    (i).toString() +
-                    "/" +
-                    apiKeys.length.toString() +
-                    ") api keys used!"
-            );
-            return data;
-        } catch (e) {
-            logger.error("API Key out of juice: " + api_key, e);
-            //throw new Error("Error at axios request ->" + e);
-            continue;
-        }
-    }
-    throw new Error("All API keys used");
-};
+
 /**
  * Return all data about a grocery item
  *
@@ -156,4 +118,4 @@ const getRecipe = async (recipeID: number) => {
     }
 };
 
-export { getRecipes, getRecipe, getProductInfo, apiKeys };
+export { getRecipes, getRecipe, getProductInfo };
